@@ -5,6 +5,6 @@ Monkey is a programming language defined in Thorsten Ball's book - Writing an In
 This repository follows closely with ideas expressed in the book.
 It aims to also extend the implementation with other experimental features.
 
-# References
+## References
 * Writing an Interpreter in Go - https://interpreterbook.com/
 
