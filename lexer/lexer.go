@@ -1,6 +1,8 @@
 package lexer
 
-import "github.com/zkpranav/imonkey/token"
+import (
+	"github.com/zkpranav/imonkey/token"
+)
 
 /*
 * Supports only ASCII text as input.
@@ -41,10 +43,30 @@ func (l *Lexer) readChar() {
 	l.lookAhead += 1
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token {
-		Type: tokenType,
-		Literal: string(ch),
+/*
+* Reads a characters until it encounters a character that is not a valid identifier character
+*/
+func (l *Lexer) readIdentifier() string {
+	start := l.pointer
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+
+	return l.input[start: l.pointer]
+}
+
+func (l *Lexer) readNumber() string {
+	start := l.pointer
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+
+	return l.input[start: l.pointer]
+}
+
+func (l *Lexer) eatWhitespace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readChar()
 	}
 }
 
@@ -53,6 +75,8 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 */
 func (l *Lexer) NextToken() token.Token {
 	var tk token.Token
+
+	l.eatWhitespace()
 
 	switch l.ch {
 		case '=':
@@ -74,8 +98,45 @@ func (l *Lexer) NextToken() token.Token {
 		case 0:
 			tk.Type = token.EOF
 			tk.Literal = ""
+		default:
+			if isLetter(l.ch) {
+				tk.Literal = l.readIdentifier()
+				tk.Type = token.GetIdentType(tk.Literal)
+				
+				return tk // returns here to avoid the upcoming readChar
+			} else if isDigit(l.ch) {
+				tk.Type = token.INT
+				tk.Literal = l.readNumber()
+
+				return tk
+			} else {
+				tk = newToken(token.ILLEGAL, l.ch)
+			}
 	}
 
 	l.readChar()
 	return tk
+}
+
+func newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token {
+		Type: tokenType,
+		Literal: string(ch),
+	}
+}
+
+func isLetter(ch byte) bool {
+	if (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' { // allows underscore
+		return true
+	}
+
+	return false
+}
+
+func isDigit(ch byte) bool {
+	if ch >= '0' && ch <= '9' {
+		return true
+	}
+
+	return false
 }
