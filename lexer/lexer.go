@@ -113,7 +113,7 @@ func (l *Lexer) NextToken() token.Token {
 		default:
 			if isLetter(l.ch) {
 				tk.Literal = l.readIdentifier()
-				tk.Type = token.GetIdentType(tk.Literal)
+				tk.Type = token.LookupIdent(tk.Literal)
 				
 				return tk // returns here to avoid the upcoming readChar
 			} else if isDigit(l.ch) {

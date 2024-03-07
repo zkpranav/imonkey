@@ -38,12 +38,15 @@ const (
 	FUNCTION = "FUNCTION"
 )
 
+/*
+* The look-up table for keywords.
+*/
 var keywords = map[string]TokenType {
 	"fn": FUNCTION,
 	"let": LET,
 }
 
-func GetIdentType(ident string) TokenType {
+func LookupIdent(ident string) TokenType {
 	if tokenType, ok := keywords[ident]; ok {
 		return tokenType
 	}
