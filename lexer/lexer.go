@@ -8,7 +8,7 @@ import (
 * Supports only ASCII text as input.
 *
 * TODO: Proccess the input as a stream of bytes from a file.
- */
+*/
 type Lexer struct {
 	input string // The source
 	pointer int // Pointer to the current character ch
@@ -83,6 +83,18 @@ func (l *Lexer) NextToken() token.Token {
 			tk = newToken(token.ASSIGN, l.ch)
 		case '+':
 			tk = newToken(token.PLUS, l.ch)
+		case '-':
+			tk = newToken(token.MINUS, l.ch)
+		case '!':
+			tk = newToken(token.BANG, l.ch)
+		case '*':
+			tk = newToken(token.ASTERISK, l.ch)
+		case '/':
+			tk = newToken(token.SLASH, l.ch)
+		case '<':
+			tk = newToken(token.LT, l.ch)
+		case '>':
+			tk = newToken(token.GT, l.ch)
 		case ',':
 			tk = newToken(token.COMMA, l.ch)
 		case ';':

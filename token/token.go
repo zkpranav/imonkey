@@ -26,6 +26,12 @@ const (
 	// Operators
 	ASSIGN = "="
 	PLUS = "+"
+	MINUS = "-"
+	BANG = "!"
+	ASTERISK = "*"
+	SLASH = "/"
+	LT = "<"
+	GT = ">"
 
 	// Keywords
 	LET = "LET"

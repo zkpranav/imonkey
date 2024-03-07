@@ -15,6 +15,8 @@ func TestNextToken(t *testing.T) {
 		};
 
 		let result = add(valX, valY);
+		!-42*/;
+		5 < 10 * 1 > 5;
 	`
 
 	expectedTokens := [] struct {
@@ -57,6 +59,21 @@ func TestNextToken(t *testing.T) {
 		{ token.IDENT, "valY" },
 		{ token.RPAREN, ")" },
 		{ token.SEMICOLON, ";" },
+		{ token.BANG, "!" },
+		{ token.MINUS, "-" },
+		{ token.INT, "42" },
+		{ token.ASTERISK, "*" },
+		{ token.SLASH, "/" },
+		{ token.SEMICOLON, ";" },
+		{ token.INT, "5" },
+		{ token.LT, "<" },
+		{ token.INT, "10" },
+		{ token.ASTERISK, "*" },
+		{ token.INT, "1" },
+		{ token.GT, ">" },
+		{ token.INT, "5" },
+		{ token.SEMICOLON, ";" },
+
 		{ token.EOF, "" },
 	}
 
