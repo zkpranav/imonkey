@@ -44,6 +44,17 @@ func (l *Lexer) readChar() {
 }
 
 /*
+* Peeks the character at lookAhead
+*/
+func (l *Lexer) peekChar() byte {
+	if l.lookAhead >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.lookAhead]
+	}
+}
+
+/*
 * Reads a characters until it encounters a character that is not a valid identifier character
 */
 func (l *Lexer) readIdentifier() string {
@@ -80,13 +91,32 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 		case '=':
-			tk = newToken(token.ASSIGN, l.ch)
+			// TODO: Encapsulate behaviour for reading two character tokens in a generic func
+			if l.peekChar() == '=' {
+				ch := l.ch
+				l.readChar()
+				tk = token.Token{
+					Type: token.EQ,
+					Literal: string(ch) + string(l.ch),
+				}
+			} else {
+				tk = newToken(token.ASSIGN, l.ch)
+			}
 		case '+':
 			tk = newToken(token.PLUS, l.ch)
 		case '-':
 			tk = newToken(token.MINUS, l.ch)
 		case '!':
-			tk = newToken(token.BANG, l.ch)
+			if l.peekChar() == '=' {
+				ch := l.ch
+				l.readChar()
+				tk = token.Token{
+					Type: token.NOT_EQ,
+					Literal: string(ch) + string(l.ch),
+				}
+			} else {
+				tk = newToken(token.BANG, l.ch)
+			}
 		case '*':
 			tk = newToken(token.ASTERISK, l.ch)
 		case '/':
