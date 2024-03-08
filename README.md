@@ -19,7 +19,7 @@ It aims to also extend the implementation with other experimental features.
 
 ## Examples
 
-Recursive Fibonacci\
+Recursive Fibonacci
 ```
 let fib = fn (n) {
     if (n == 0) {
@@ -29,7 +29,6 @@ let fib = fn (n) {
     } else {
         return fib(n - 1) + fib(n - 2);
     }
-let result = fib(10);
 };
 ```
 
