@@ -17,6 +17,22 @@ It aims to also extend the implementation with other experimental features.
 * Array data structure
 * Hash map data structure
 
+## Examples
+
+Recursive Fibonacci\
+```
+let fib = fn (n) {
+    if (n == 0) {
+        return 1;
+    } else if (n == 1) {
+        return 1;
+    } else {
+        return fib(n - 1) + fib(n - 2);
+    }
+let result = fib(10);
+};
+```
+
 ## References
 * Writing an Interpreter in Go - https://interpreterbook.com/
 
