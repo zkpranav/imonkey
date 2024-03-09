@@ -1,20 +1,24 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/zkpranav/imonkey/ast"
 	"github.com/zkpranav/imonkey/lexer"
 	"github.com/zkpranav/imonkey/token"
 )
 
 type Parser struct {
-	l *lexer.Lexer
-	curToken token.Token
+	l              *lexer.Lexer
+	curToken       token.Token
 	lookAheadToken token.Token
+	errors         []string
 }
 
 func New(l *lexer.Lexer) *Parser {
-	p := Parser {
-		l: l,
+	p := Parser{
+		l:      l,
+		errors: []string{},
 	}
 
 	// Sets curToken and peekToken
@@ -29,12 +33,21 @@ func (p *Parser) nextToken() {
 	p.lookAheadToken = p.l.NextToken()
 }
 
+func (p *Parser) Errors() []string {
+	return p.errors
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("peek token mismatch. expected=%s, got=%s", t, p.lookAheadToken.Type)
+	p.errors = append(p.errors, msg)
+}
+
 /*
 * Implements a Recursive Decent parser.
 *
 * Parse one token --> realize --> within context parse one token --> realize --> ...
 * This defines the recursive nature of this parser and provides intuition for how it generates the AST top-down.
-*/
+ */
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
@@ -44,7 +57,7 @@ func (p *Parser) ParseProgram() *ast.Program {
 		if statement != nil {
 			program.Statements = append(program.Statements, statement)
 		}
-		
+
 		p.nextToken()
 	}
 
@@ -53,10 +66,10 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
-		case token.LET:
-			return p.parseLetStatement()
-		default:
-			return nil
+	case token.LET:
+		return p.parseLetStatement()
+	default:
+		return nil
 	}
 }
 
@@ -77,7 +90,7 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	if !p.expectPeekAndAdvance(token.ASSIGN) {
 		return nil
 	}
-	
+
 	// TODO: Expect expression & store expression
 
 	for !p.curTokenIs(token.SEMICOLON) {
@@ -100,6 +113,7 @@ func (p *Parser) expectPeekAndAdvance(expectedType token.TokenType) bool {
 		p.nextToken()
 		return true
 	} else {
+		p.peekError(expectedType)
 		return false
 	}
 }
