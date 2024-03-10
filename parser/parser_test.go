@@ -1,17 +1,17 @@
 package parser
 
 import (
-	"log"
-	"testing"
 	"github.com/zkpranav/imonkey/ast"
 	"github.com/zkpranav/imonkey/lexer"
+	"log"
+	"testing"
 )
 
 func TestVariableBinding(t *testing.T) {
 	ip := `
-		let x = 5;
-		let y = 10;
-		let foo = 420;
+		return 1;
+		return 420;
+		return 1 * 5;
 	`
 
 	l := lexer.New(ip)
@@ -28,19 +28,8 @@ func TestVariableBinding(t *testing.T) {
 		log.Fatalf("incorrect number of statements. expected=3, got=%d", len(program.Statements))
 	}
 
-	testTable := []struct {
-		expectedIdentifier string
-	}{
-		{"x"},
-		{"y"},
-		{"foo"},
-	}
-
-	for i, test := range testTable {
-		statement := program.Statements[i]
-		if !testLetStatement(t, statement, test.expectedIdentifier) {
-			return
-		}
+	for _, s := range program.Statements {
+		testReturnStatement(t, s)
 	}
 }
 
@@ -67,6 +56,19 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	}
 
 	return true
+}
+
+func testReturnStatement(t *testing.T, s ast.Statement) {
+	rs, ok := s.(*ast.ReturnStatement)
+
+	if !ok {
+		t.Errorf("rs is not an ast.ReturnStatement. got=%T", rs)
+		return
+	}
+
+	if rs.TokenLiteral() != "return" {
+		t.Errorf("rs.TokenLiteral incorrect. expected=return, got=%s", rs.TokenLiteral())
+	}
 }
 
 func checkParserErrors(t *testing.T, p *Parser) {

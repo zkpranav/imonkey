@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-
 	"github.com/zkpranav/imonkey/ast"
 	"github.com/zkpranav/imonkey/lexer"
 	"github.com/zkpranav/imonkey/token"
@@ -68,6 +67,8 @@ func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
+	case token.RETURN:
+		return p.parseReturnStatement()
 	default:
 		return nil
 	}
@@ -90,6 +91,22 @@ func (p *Parser) parseLetStatement() *ast.LetStatement {
 	if !p.expectPeekAndAdvance(token.ASSIGN) {
 		return nil
 	}
+
+	// TODO: Expect expression & store expression
+
+	for !p.curTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return statement
+}
+
+func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
+	statement := &ast.ReturnStatement{
+		Token: p.curToken,
+	}
+
+	p.nextToken()
 
 	// TODO: Expect expression & store expression
 
